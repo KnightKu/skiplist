@@ -160,6 +160,36 @@ skiplist_search(struct skiplist *list, int key)
 }
 
 static struct skipnode *
+skiplist_search_first_eq_big(struct skiplist *list, int key)
+{
+        int i = list->level - 1;
+        struct sk_link *pos = &list->head[i];
+        struct sk_link *end = &list->head[i];
+        struct skipnode *node, *t_node = NULL;
+	
+
+        for (; i >= 0; i--) {
+                pos = pos->next;
+                skiplist_foreach(pos, end) {
+                        node = list_entry(pos, struct skipnode, link[i]);
+                        if (node->key >= key) {
+				t_node = node;
+                                end = &node->link[i];
+                                break;
+                        }
+                }
+                if (node->key == key) {
+                        return node;
+                }
+                pos = end->prev;
+                pos--;
+                end--;
+        }
+
+        return t_node;
+}
+
+static struct skipnode *
 skiplist_insert(struct skiplist *list, int key, int value)
 {
         int level = random_level();
