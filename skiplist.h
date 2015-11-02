@@ -225,7 +225,10 @@ skiplist_remove(struct skiplist *list, int key)
                         if (node->key == key) {
                                 // Here's no break statement because we allow nodes with same key.
                                 __remove(list, node, i + 1);
-                        }
+                        } else if (node->key > key) {
+				end = &node->link[i];
+                                break;
+			}
                 }
                 pos = end->prev;
                 pos--;
